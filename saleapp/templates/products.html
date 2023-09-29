@@ -8,6 +8,14 @@
 <body>
 <div class="container">
     <h1 class="subject">DANH MỤC SẢN PHẨM</h1>
+
+    {% if products %}
+    <form method="get" action="/products">
+            <input type="text" name="keyword" placeholder="Nhap tu khoa..."/>
+        <input type="number" name="from_price" placeholder="Nhap tu gia..."/>
+        <input type="number" name="to_price" placeholder="'nhap den gia.."/>
+             <input type="submit" value="Tim kiem">
+    </form>
     <table border="1" width="100%" class="products">
         <tr>
             <th></th>
@@ -17,6 +25,7 @@
             <th>Gia hạn</th>
         </tr>
         {% for p in products %}
+
         <tr>
             <td>
                <img src="{{url_for('static', filename=p.image)}}"width="60" alt="{{p.name}}">
@@ -28,6 +37,9 @@
         </tr>
         {% endfor %}
     </table>
+    {% else %}
+    <h1>Không có sản phầm nào!</h1>
+    {% endif %}
 </div>
 </body>
 </html>
