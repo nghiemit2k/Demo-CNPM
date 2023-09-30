@@ -1,18 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Trang chủ</title>
-    <link href="{{ url_for('static', filename='css/style.css')}}" rel="stylesheet">
-</head>
-<body>
+{% extends 'layout/base.html' %}
+{% block title %}Trang chu{% endblock %}
+{% block content %}
+<div class="row">
 <h1 class="subject"> xin chào </h1>
-
-<ul>
-  <li><a href="{{url_for('product_list')}}">Tất cả sản phẩm </a></li>
-    {% for cat in categories %}
-    <li><a href="{{url_for('product_list',category_id = cat.id)}}">{{cat.name}}</a> </li>
-    {% endfor %}
-</ul>
-</body>
-</html>
+<div class="container">
+    <div class="row">
+           <div class="card" style="width:400px">
+              <img class="card-img-top" src="img_avatar1.png" alt="Card image">
+              <div class="card-body">
+                <h4 class="card-title">John Doe</h4>
+                <p class="card-text">Some example text.</p>
+                <a href="#" class="btn btn-primary">See Profile</a>
+              </div>
+</div>
+    </div>
+</div>
+</div>
+{% endblock %}

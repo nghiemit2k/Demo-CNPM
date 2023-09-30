@@ -6,7 +6,10 @@ from saleapp.admin import *
 @app.route("/")
 def index():
     cates = utils.read_categories()
-    return render_template("index.html", categories=cates)
+    kw = request.args.get('keyword')
+    cate_id = request.args.get('category_id')
+    products = utils.read_products(kw=kw,cate_id=cate_id)
+    return render_template("index.html", categories=cates,products=products)
 
 
 @app.route("/products")
