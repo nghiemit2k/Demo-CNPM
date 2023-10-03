@@ -15,7 +15,7 @@ def read_categories():
     # return read_json(os.path.join(app.root_path, "data/categories.json"))
 
 
-def read_products(cate_id=None,kw = None,from_price =None,to_price=None):
+def read_products(cate_id=None,kw = None,from_price =None,to_price=None,page =1):
     # products = read_json(os.path.join(app.root_path, "data/products.json"))
     # if cate_id:
     #     products = [p for p in products if p['category_id'] == int(cate_id)]

@@ -35,7 +35,7 @@ class Product(BaseModel):
 
 if __name__ == '__main__':
     with app.app_context():
-        # db.create_all()
+         # db.create_all()
         # c1 = Category(name='Dien thoai')
         # c2 = Category(name='May tinh bang')
         # c3 = Category(name='Phu kien')
@@ -64,6 +64,20 @@ if __name__ == '__main__':
             "price": 24000000,
             "image": "image/4.jpg",
 
+            "category_id": 1
+        }, {
+            "id": 4,
+            "name": "Galaxy Plus",
+            "description": "Samsung, 64GB, RAML: 6GB",
+            "price": 35000000,
+            "image": "image/1.jpg",
+            "category_id": 1
+        }, {
+            "id": 5,
+            "name": "Iphone 15",
+            "description": "Iphone, 64GB, RAML: 6GB",
+            "price": 25000000,
+            "image": "image/2.jpg",
             "category_id": 1
         }]
         for p in a:
