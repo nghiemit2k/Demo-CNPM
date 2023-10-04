@@ -20,7 +20,7 @@ def read_products(cate_id=None,kw = None,from_price =None,to_price=None,page =1)
     # if cate_id:
     #     products = [p for p in products if p['category_id'] == int(cate_id)]
     # return products
-    products = Product.query
+    products = Product.query.filter(Product.active.__eq__(True))
     if cate_id:
         products = products.filter(Product.category_id.__eq__(cate_id))
     if kw:
@@ -29,4 +29,9 @@ def read_products(cate_id=None,kw = None,from_price =None,to_price=None,page =1)
         products = products.filter(Product.price.__ge__(float(from_price)))
     if to_price:
         products = products.filter(Product.price.__le__(float(to_price)))
-    return products.all()
+    page_size = app.config['PAGE_SIZE']
+    start =(page-1) * page_size
+    end = start +page_size
+    return products.slice(start,end).all()
+def count_products():
+    return Product.query.filter(Product.active.__eq__(True)).count()

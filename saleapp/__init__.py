@@ -5,6 +5,6 @@ app = Flask(__name__)
 app.secret_key ='@#djjdjdjd$%^'
 app.config['SQLALCHEMY_DATABASE_URI']='mysql+pymysql://root:123456@localhost/saleapp?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['PAGE_SIZE']=4
+app.config['PAGE_SIZE']=8
 db = SQLAlchemy(app=  app)
 admin = Admin(app=app, name ="Khai Nghiem", template_mode='bootstrap4')
