@@ -1,8 +1,9 @@
 import json
 import os.path
 
-from saleapp import app
-from saleapp.models import Category, Product
+from saleapp import app, db
+from saleapp.models import Category, Product, User
+import hashlib
 
 
 def read_json(path):
@@ -15,7 +16,7 @@ def read_categories():
     # return read_json(os.path.join(app.root_path, "data/categories.json"))
 
 
-def read_products(cate_id=None,kw = None,from_price =None,to_price=None,page =1):
+def read_products(cate_id=None, kw=None, from_price=None, to_price=None, page=1):
     # products = read_json(os.path.join(app.root_path, "data/products.json"))
     # if cate_id:
     #     products = [p for p in products if p['category_id'] == int(cate_id)]
@@ -30,8 +31,27 @@ def read_products(cate_id=None,kw = None,from_price =None,to_price=None,page =1)
     if to_price:
         products = products.filter(Product.price.__le__(float(to_price)))
     page_size = app.config['PAGE_SIZE']
-    start =(page-1) * page_size
-    end = start +page_size
-    return products.slice(start,end).all()
+    start = (page - 1) * page_size
+    end = start + page_size
+    return products.slice(start, end).all()
+
+
+def add_user(name, username, password, **kwargs):
+    if password is not None:
+        password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+    user = User(name=name.strip(), username=username.strip(), password=password, email=kwargs.get('email'),
+                avatar=kwargs.get('avatar'))
+    db.session.add(user)
+    db.session.commit()
+
+
+def get_user_by_id(user_id):
+    return User.query.get(user_id)
+
 def count_products():
     return Product.query.filter(Product.active.__eq__(True)).count()
+
+def check_login(username,password):
+    if username and password:
+        password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+        return User.query.filter(User.username.__eq__(username.strip()),User.password.__eq__(password)).first()

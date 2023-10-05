@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, Foreig
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from saleapp import app
+from flask_login import UserMixin
 from enum import Enum as UserEnum
 
 class UserRole(UserEnum):
@@ -35,7 +36,7 @@ class Product(BaseModel):
     def __str__(self):
         return self.name
 
-class User(BaseModel):
+class User(BaseModel,UserMixin):
     name = Column(String(50),nullable=False)
     username = Column(String(50),nullable=False, unique=True)
     password = Column(String(50),nullable=False)
