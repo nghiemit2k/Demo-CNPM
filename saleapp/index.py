@@ -2,10 +2,11 @@ import math
 
 import cloudinary.uploader
 from flask import render_template, request, redirect, url_for
-from saleapp import app,login
+from saleapp import app, login
 import utils
 from saleapp.admin import *
-from flask_login import login_user,logout_user
+from flask_login import login_user, logout_user
+
 
 @app.route("/")
 def index():
@@ -67,26 +68,44 @@ def common_response():
     return {
         'categories': utils.read_categories()
     }
+
+
 @login.user_loader
 def user_load(user_id):
     return utils.get_user_by_id(user_id=user_id)
-@app.route('/user-login', methods=['get','post'])
+
+
+@app.route('/user-login', methods=['get', 'post'])
 def user_signin():
-    err_msg= ''
+    err_msg = ''
     if request.method.__eq__('POST'):
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user = utils.check_login(username=username,password=password)
-        if(user):
+        user = utils.check_login(username=username, password=password)
+        if (user):
             login_user(user=user)
             return redirect(url_for('index'))
         else:
             err_msg = 'Username hoac password khong dung'
     return render_template("login.html", err_msg=err_msg)
+
+
+@app.route('/admin-login', methods=['post'])
+def admin_login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    user = utils.check_login(username=username,password=password)
+    if user:
+        login_user(user=user)
+
+    return redirect('/admin')
+
 @app.route('/user-logout')
 def user_signout():
     logout_user()
     return redirect(url_for('user_signin'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)

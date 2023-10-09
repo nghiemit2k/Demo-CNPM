@@ -1,6 +1,6 @@
 from saleapp import db
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Enum
-from sqlalchemy.orm import relationship,backref
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 from saleapp import app
 from flask_login import UserMixin
@@ -35,7 +35,8 @@ class Product(BaseModel):
     created_date = Column(DateTime, default=datetime.now())
     image = Column(String(100))
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
-    tag= relationship('Tag',secondary='product_tag',lazy='subquery',backref=backref('products',lazy=True))
+    tag = relationship('Tag', secondary='product_tag', lazy='subquery', backref=backref('products', lazy=True))
+
     def __str__(self):
         return self.name
 
@@ -53,9 +54,25 @@ class User(BaseModel, UserMixin):
     def __str__(self):
         return self.name
 
-product_tag= db.Table('product_tag',
-                      Column('product_id', Integer,ForeignKey('product.id'),primary_key=True),
-                      Column('tag_id',Integer,ForeignKey('tag.id'),primary_key=True))
+
+class Receipt(BaseModel):
+    created_date = Column(DateTime, default=datetime.now())
+    user_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    details = relationship('ReceiptDetail', backref='receipt', lazy=True)
+
+
+class ReceiptDetail(db.Model):
+    receipt_id = Column(Integer, ForeignKey(Receipt.id), nullable=False, primary_key=True)
+    product_id = Column(Integer, ForeignKey(Product.id), nullable=False, primary_key=True)
+    quantity = Column(Integer, default=0)
+    unit_price = Column(Float, default=0)
+
+
+product_tag = db.Table('product_tag',
+                       Column('product_id', Integer, ForeignKey('product.id'), primary_key=True),
+                       Column('tag_id', Integer, ForeignKey('tag.id'), primary_key=True))
+
+
 class Tag(BaseModel):
     __tablename__ = 'tag'
     name = Column(String(20), nullable=False, unique=True)
@@ -65,11 +82,11 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
 
-        t1 = Tag(name='promotion')
-        t2 = Tag(name ='new')
-        db.session.add(t1)
-        db.session.add(t2)
-        db.session.commit()
+        # t1 = Tag(name='promotion')
+        # t2 = Tag(name ='new')
+        # db.session.add(t1)
+        # db.session.add(t2)
+        # db.session.commit()
     # c1 = Category(name='Dien thoai')
     # c2 = Category(name='May tinh bang')
     # c3 = Category(name='Phu kien')
