@@ -1,8 +1,70 @@
 {% extends 'admin/base.html' %}
 
 {% block body %}
+{{ msg }}
 {% if current_user.is_authenticated %}
 <h1 class="text-info"> welcome <span class="text-danger"> {{ current_user.name}} </span>to our website</h1>
+<div class="row">
+  <div class="col-md-5">
+    <table class="table">
+  <tr>
+    <th>Id</th>
+    <th>Ten</th>
+    <Th>So luong sp</Th>
+  </tr>
+  {% for s in stats %}
+  <tr>
+   <td>{{s[0].id}}</td>
+    <td>{{s[0].name}}</td>
+    <td>{{s[1]}}</td>
+  </tr>
+  {% endfor %}
+</table>
+  </div>
+  <div class="col-md-6">
+     <canvas id="myChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+ let labels = [], counter=[],colors=[], borderColors=[]
+ let r,g,b
+{% for s in stats %}
+    labels.push(`{{s[0].name}}`)
+  counter.push({{s[1]}})
+  r = parseInt(Math.random()*255)
+  g = parseInt(Math.random()*255)
+  b = parseInt(Math.random()*255)
+ colors.push(`rgba(${r}, ${g}, ${b}, 0.2)`)
+ borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`)
+  {% endfor %}
+
+  window.onload = function () {
+    const ctx= document.getElementById('myChart').getContext('2d')
+    const myChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '# of Votes',
+        data: counter,
+        backgroundcolor: colors,
+        borderColors: borderColors,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  }
+</script>
 {% else %}
 <h1 class="text-info text-center"> DANG NHAP NGUOI QUAN TRI</h1>
     <form method="post" action="{{ url_for('admin_login')}}">

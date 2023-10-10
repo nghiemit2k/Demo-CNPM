@@ -36,7 +36,7 @@ class Product(BaseModel):
     image = Column(String(100))
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     tag = relationship('Tag', secondary='product_tag', lazy='subquery', backref=backref('products', lazy=True))
-
+    receipt_details = relationship('ReceiptDetail',backref='product',lazy=True)
     def __str__(self):
         return self.name
 
@@ -50,6 +50,7 @@ class User(BaseModel, UserMixin):
     active = Column(Boolean, default=True)
     joined_date = Column(DateTime, default=datetime.now())
     user_role = Column(Enum(UserRole), default=UserRole.USER)
+    receipt = relationship('Receipt',backref='user', lazy=True)
 
     def __str__(self):
         return self.name
@@ -81,7 +82,7 @@ class Tag(BaseModel):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-
+        # r1 = Receipt()
         # t1 = Tag(name='promotion')
         # t2 = Tag(name ='new')
         # db.session.add(t1)

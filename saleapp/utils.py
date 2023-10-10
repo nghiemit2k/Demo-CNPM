@@ -1,8 +1,10 @@
 import json
 import os.path
-
+from flask import current_app
 from saleapp import app, db
-from saleapp.models import Category, Product, User
+from saleapp.models import Category, Product, User,ReceiptDetail,Receipt
+from flask_login import current_user
+from sqlalchemy import func
 import hashlib
 
 
@@ -55,3 +57,36 @@ def check_login(username,password):
     if username and password:
         password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
         return User.query.filter(User.username.__eq__(username.strip()),User.password.__eq__(password)).first()
+
+def product_count_by_cate():
+    return Category.query.join(Product, Product.category_id.__eq__(Category.id),isouter=True)\
+        .add_columns(func.count(Product.id)).group_by(Category.id).all()
+
+def product_stats(kw=None, from_date = None,to_date=None):
+    p= db.session.query(Product.id,Product.name,func.sum(ReceiptDetail.quantity * ReceiptDetail.unit_price))\
+        .join(ReceiptDetail,ReceiptDetail.product_id.__eq__(Product.id),isouter=True)\
+        .group_by(Product.id,Product.name)
+    return p.all()
+
+def cart_stats(cart):
+    total_quantity,total_amount =0, 0
+    if cart:
+        for c in cart.values():
+            total_quantity += c['quantity']
+            total_amount += c['quantity'] * c['price']
+    return {
+        'total_quantity': total_quantity,
+        'total_amount': total_amount
+    }
+
+def add_receipt(cart):
+    if cart:
+        receipt = Receipt(user=current_user)
+        db.session.add(receipt)
+
+        for c in cart.values():
+            d = ReceiptDetail(receipt=receipt,product_id=c['id'],
+                              quantity = c['quantity'],unit_price=c['price'])
+            db.session.add(d)
+
+        db.session.commit()
